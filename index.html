@@ -19,16 +19,30 @@
     <add name="Access-Control-Allow-Headers" value="Origin, X-Requested-With, Content-Type, Accept" />
   </customHeaders>
 </httpProtocol>
- 
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 70%;
+      }
+      #mapid { height: 180px; }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
   </head>
   <body>
 <div id='map' style='width: 400px; height: 300px;'></div>
+<div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
     <script>
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoic21hZ2lrZXJuIiwiYSI6ImNqbDU0cGg3ajJpdjUza3F0dHVkand1dzYifQ.Rxaj4FWLwXrN1iPcewCvUA';
 
 var lat, lng;
-var map = L.map('map').setView([55.75, 37.61], 13);
+var map = L.map('map').setView([55.75, 37.61], 8);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -50,69 +64,158 @@ lat=lat.toFixed(2);lng=lng.toFixed(2);
 lat = (Math.round(lat * 4) / 4).toFixed(2);
 lng = (Math.round(lng * 4) / 4).toFixed(2);
 console.log(lat);console.log(lng);
-
+jan1=0;feb1=0;mart1=0;apr1=0;may1=0;june1=0;july1=0;aug1=0;
 var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
          if (this.readyState == 4 && this.status == 200) {
-             console.log(this.responseText);
+             //console.log(this.responseText);
              tt=JSON.parse(this.responseText);tt1=tt.features;
-             //console.log(tt1[0]['properties']['gmx_id']); //["type"] ['gmx_id'] .['properties']  properties
-         }
-    };
-xhttp.open("POST", "http://maps.kosmosnimki.ru/rest/ver1/layers/35FB2C338FED4B64B7A326FBFE54BE73/search?query=%22lat%22="+lat+"and%22lon%22="+lng+"&apikey=6Q81IXBUQ7", true); //&WrapStyle=func
-//http://maps.kosmosnimki.ru/rest/ver1/layers/11A381497B4A4AE4A4ED6580E1674B72/search?query=year(%22date%22)=2017%20and%20%22gridpoint_id%22=1002041&apikey=6Q81IXBUQ7
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
-    xhttp.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    xhttp.send("Your JSON Data Here");
+             tt2=tt1[0]['properties']['gmx_id'];
+             console.log(tt1[0]['properties']['gmx_id']); //["type"] ['gmx_id'] .['properties']  properties
 
-
-    var xhttp = new XMLHttpRequest();
+             var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
          if (this.readyState == 4 && this.status == 200) {
-             //console.log(this.responseText);
+               ttt=JSON.parse(this.responseText);
+               console.log(ttt['features'][0]);
+               temp=[];dat=[];
+             for(i = 0; i < ttt['features'].length; i++) { temp[i]=ttt['features'][i]['properties']['AvgTemp'];
+              dat[i]=ttt['features'][i]['properties']['Date'];}
+              var sum = 0;
+              for( var i = 0; i < 31; i++ ){
+                sum += temp[i]; //don't forget to add the base
+               }
+              jan1=sum/31;
+              var sum1 = 0;
+              for( var i = 31; i < 31+28; i++ ){
+                sum1 += temp[i]; //don't forget to add the base
+               }
+               feb1=sum1/28;
+               var sum2 = 0;
+              for( var i = 31+28; i < 31+28+31; i++ ){
+                sum2 += temp[i]; //don't forget to add the base
+               }
+               mart1=sum2/31;
+               var sum3 = 0;
+              for( var i = 31+28+31; i < 31+28+31+30; i++ ){
+                sum3 += temp[i]; //don't forget to add the base
+               }
+               apr1=sum3/30;
+               var sum4 = 0;
+              for( var i = 31+28+31+30; i < 31+28+31+30+31; i++  ){
+                sum4 += temp[i]; //don't forget to add the base
+               }
+               may1=sum4/31;
+               var sum5 = 0;
+              for( var i = 31+28+31+30+31; i < 31+28+31+30+31+30; i++){
+                sum5 += temp[i]; //don't forget to add the base
+               }
+               june1=sum5/30;
+               var sum6 = 0;
+              for( var i = 31+28+31+30+31+30; i < 31+28+31+30+31+30+31; i++){
+                sum6 += temp[i]; //don't forget to add the base
+               }
+               july1=sum6/31;
+               var sum7 = 0;
+              for( var i = 31+28+31+30+31+30+31; i < temp.length; i++){
+                sum7 += temp[i]; //don't forget to add the base
+               }
+               aug1=sum7/31;
+               
+               //console.log(jan1, feb1, mart1, apr1, may1, june1, july1,aug1)
+
+
+          xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 200) {
+
              tt=JSON.parse(this.responseText); //['features']
-             console.log(tt['features'][1]['properties']['Date'])
-             console.log(tt['features'][1]['properties']['AvgTemp'])//console.log(tt1[0]['properties']['gmx_id']); //["type"] ['gmx_id'] .['properties']  properties
-         }
-    };
-xhttp.open("POST", "http://maps.kosmosnimki.ru/rest/ver1/layers/11A381497B4A4AE4A4ED6580E1674B72/search?query=year(%22date%22)=2017%20and%20%22gridpoint_id%22=1002041&apikey=6Q81IXBUQ7", true); //&WrapStyle=func
-//
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
-    xhttp.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    xhttp.send("Your JSON Data Here");
+             console.log(tt['features'][0]);
+             temp=[];dat=[];
+             for(i = 0; i < tt['features'].length; i++) { temp[i]=tt['features'][i]['properties']['AvgTemp'];
+              dat[i]=tt['features'][i]['properties']['Date'];}
+              var sum = 0;
+              for( var i = 0; i < 31; i++ ){
+                sum += temp[i]; //don't forget to add the base
+               }
+              jan=sum/31;
+              var sum1 = 0;
+              for( var i = 31; i < 31+28; i++ ){
+                sum1 += temp[i]; //don't forget to add the base
+               }
+               feb=sum1/28;
+               var sum2 = 0;
+              for( var i = 31+28; i < 31+28+31; i++ ){
+                sum2 += temp[i]; //don't forget to add the base
+               }
+               mart=sum2/31;
+               var sum3 = 0;
+              for( var i = 31+28+31; i < 31+28+31+30; i++ ){
+                sum3 += temp[i]; //don't forget to add the base
+               }
+               apr=sum3/30;
+               var sum4 = 0;
+              for( var i = 31+28+31+30; i < 31+28+31+30+31; i++  ){
+                sum4 += temp[i]; //don't forget to add the base
+               }
+               may=sum4/31;
+               var sum5 = 0;
+              for( var i = 31+28+31+30+31; i < 31+28+31+30+31+30; i++){
+                sum5 += temp[i]; //don't forget to add the base
+               }
+               june=sum5/30;
+               var sum6 = 0;
+              for( var i = 31+28+31+30+31+30; i < 31+28+31+30+31+30+31; i++){
+                sum6 += temp[i]; //don't forget to add the base
+               }
+               july=sum6/31;
+               var sum7 = 0;
+              for( var i = 31+28+31+30+31+30+31; i < 31+28+31+30+31+30+31+31; i++){
+                sum7 += temp[i]; //don't forget to add the base
+               }
+               aug=sum7/31;
+               var sum8 = 0;
+              for( var i = 31+28+31+30+31+30+31+31; i < 31+28+31+30+31+30+31+31+30; i++){
+                sum8 += temp[i]; //don't forget to add the base
+               }
+               sept=sum8/30;
+               var sum9 = 0;
+              for( var i = 31+28+31+30+31+30+31+31+30; i < 31+28+31+30+31+30+31+31+30+31; i++){
+                sum9 += temp[i]; //don't forget to add the base
+               }
+               octo=sum9/31;
+               var sum10 = 0;
+              for( var i = 31+28+31+30+31+30+31+31+30+31; i < 31+28+31+30+31+30+31+31+30+31+30; i++){
+                sum10 += temp[i]; //don't forget to add the base
+               }
+               november=sum10/30;
+               var sum11 = 0;
+              for( var i = 31+28+31+30+31+30+31+31+30+31+30; i < 31+28+31+30+31+30+31+31+30+31+30+31; i++){
+                sum11 += temp[i]; //don't forget to add the base
+               }
+               december=sum11/31;
 
-d=new Date("2015-03-25")
-var dateObj = new Date();
-var month = dateObj.getUTCMonth() + 1; //months from 1-12
-var day = dateObj.getUTCDate();
-var year = dateObj.getUTCFullYear();
-console.log(year + "/" + month + "/" + day)
-       return false; // To disable default popup.
-});
+            console.log(Math.min(...temp.slice(0,31)))
+            console.log(Math.max(...temp.slice(0,31)))
+            console.log(temp[0],temp[20])
 
-</script>
-      
-      <div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
-<script type="text/javascript">
-	
-
-var xData = ['январь', 'февраль',
+            var xData = ['январь', 'февраль',
   'март', 'апрель',
   'май', 'июнь', 'июль', 'август',
   'сентябрь', 'октябрь',
   'ноябрь', 'декабрь'];
 
-var yData = [400, 660, 660, 590, 400, 400, 340];
+var yData = [0, -3, -6, 3, 6, 12, 15];
 
-var textList = ['$430K', '$260K', '$690K', '$-120K', '$-200K', '$-320K', '$370K'];
-
+var textList = ['','','','','','','','','','','',''];
+iu=0;
+//console.log(jan, feb, mart, apr, may, june, july,aug,sept,octo,november,december)
+console.log(jan1, feb1, mart1, apr1, may1, june1, july1,aug1)
 //Revenue
-var trace2 = {
+var trace = {
   x: xData,
-  y: [430, 260, 690, 220, 330, 110, 440,50,700,-200,-100,400],
+  y: [jan1, feb1, mart1, apr1, may1, june1, july1,aug1],
   type: 'bar',
+  name: 'Средняя 2018',
   marker: {
     color: 'rgba(55,128,191,0.7)',
     line: {
@@ -124,8 +227,9 @@ var trace2 = {
 
 var trace1 = {
   x: xData,
-  y: [30, 60, 90, 20, 30, 10, 40,50,-90],
+  y: [jan, feb, mart, apr, may, june, july,aug,sept,octo,november,december],
   type: 'bar',
+  name: 'Средняя 2017',
   marker: {
     color: 'rgba(1,1,1,0.0)',//rgba(55,128,291,0.7)',
     line: {
@@ -136,14 +240,14 @@ var trace1 = {
 };
 
 
-var data = [trace1,trace2];
+var data = [trace1,trace];
 
 var layout = {
-  title: 'Температура 2018',
+  title: 'Соотношение Температур 2018',
   barmode: 'stack',
   paper_bgcolor: 'rgba(245,246,249,1)',
   plot_bgcolor: 'rgba(245,246,249,1)',
-  showlegend: false,
+  showlegend: true,
   annotations: []
 };
 
@@ -159,10 +263,61 @@ for ( var i = 0 ; i < xData.length ; i++ ) {
     },
     showarrow: false
   };
-  layout.annotations.push(result);
+  //layout.annotations.push(result);
 }
 
 Plotly.newPlot('myDiv', data, layout);
+
+
+              /*
+             console.log(tt['features'][0]['properties']['Date'])
+             console.log(tt['features'][0]['properties']['AvgTemp'])
+             console.log(tt['features'][1]['properties']['Date'])
+             console.log(tt['features'][1]['properties']['AvgTemp'])
+             console.log(tt['features'][2]['properties']['Date'])
+             console.log(tt['features'][2]['properties']['AvgTemp'])
+             */
+         }
+    };
+xhttp.open("POST", "http://maps.kosmosnimki.ru/rest/ver1/layers/11A381497B4A4AE4A4ED6580E1674B72/search?query=year(%22date%22)=2017%20and%20%22gridpoint_id%22="+tt2+"&apikey=6Q81IXBUQ7", true); //&WrapStyle=func
+//
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhttp.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    xhttp.send("Your JSON Data Here");
+
+         }
+    };
+    xhttp.open("POST", "http://maps.kosmosnimki.ru/rest/ver1/layers/11A381497B4A4AE4A4ED6580E1674B72/search?query=year(%22date%22)=2018%20and%20%22gridpoint_id%22="+tt2+"&apikey=6Q81IXBUQ7", true); //&WrapStyle=func
+//
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhttp.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    xhttp.send("Your JSON Data Here");
+
+         }
+    };
+xhttp.open("POST", "http://maps.kosmosnimki.ru/rest/ver1/layers/35FB2C338FED4B64B7A326FBFE54BE73/search?query=%22lat%22="+lat+"and%22lon%22="+lng+"&apikey=6Q81IXBUQ7", true); //&WrapStyle=func
+//http://maps.kosmosnimki.ru/rest/ver1/layers/11A381497B4A4AE4A4ED6580E1674B72/search?query=year(%22date%22)=2017%20and%20%22gridpoint_id%22=1002041&apikey=6Q81IXBUQ7
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhttp.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    xhttp.send("Your JSON Data Here");
+
+
+    
+
+d=new Date("2015-03-25")
+var dateObj = new Date();
+var month = dateObj.getUTCMonth() + 1; //months from 1-12
+var day = dateObj.getUTCDate();
+var year = dateObj.getUTCFullYear();
+console.log(year + "/" + month + "/" + day)
+       return false; // To disable default popup.
+});
+
+	
+
 
 
 </script>
